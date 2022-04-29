@@ -147,4 +147,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/img')
 CSRF_COOKIE_SECURE = False
 
 
-django_heroku.settings(locals())
+django_on_heroku.settings(locals())
