@@ -16,6 +16,8 @@ from pathlib import Path
 import  os
 from unittest.mock import seal
 
+import django_on_heroku
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -143,3 +145,6 @@ MEDIA_URL = 'img/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/img')
 
 CSRF_COOKIE_SECURE = False
+
+
+django_heroku.settings(locals())
