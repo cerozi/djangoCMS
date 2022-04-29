@@ -1,0 +1,23 @@
+{% extends 'home/main.html' %}
+
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+
+            <p>Você realmente deseja excluir o produto: <strong>{{ order }}</strong>?</p>
+
+            <form action="" method="POST">
+
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Deletar</button>
+            
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

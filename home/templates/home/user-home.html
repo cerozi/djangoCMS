@@ -1,0 +1,77 @@
+{% extends 'home/main.html' %}
+
+{% block content %}
+
+<br>
+
+<div class="row">
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-white mb-3" id="total-orders">
+                <div class="card-header">
+                    <h5 class="card-title">TOTAL DE PEDIDOS</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ total_orders }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-white mb-3" id="orders-delivered">
+                <div class='card-header'>
+                    <h5 class="card-title">PEDIDOS ENTREGUES</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ delivery }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='col'>
+        <div class="col-md">
+            <div class="card text-center text-white mb-3" id="orders-pending">
+                <div class="card-header">
+                    <h5 card="card-title">PEDIDOS PENDENTES</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ pending }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Produto</th>
+					<th>Categoria</th>
+					<th>Data do pedido</th>
+					<th>Status</th>
+				</tr>
+
+				{% for order in customer_orders %}
+				<tr>
+					<td>{{ order }}</td>
+					<td></td>
+					<td>{{ order.data }}</td>
+					<td>{{ order.status }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="6" ><center>Nenhum produto registrado.</center></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
