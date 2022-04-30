@@ -1,6 +1,6 @@
 # Django CUSTOMER MANAGEMENT SYSTEM
 
-A customer management system made using Django 3.2.10 and Python 3.7.6. Contains simple CRUD operations, user profiles, permissions and simple django signals features.
+A customer management system made using Django 3.2.10 and Python 3.7.6. Contains simple CRUD operations, user profiles, permissions and simple django signals features. You can find the deploy project at https://cms-with-django.herokuapp.com/. (login: admin - password: admin)
 
 # To run this project...
 
