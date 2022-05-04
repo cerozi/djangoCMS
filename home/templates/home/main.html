@@ -1,3 +1,5 @@
+{% load orders_pending_tag %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,20 +46,39 @@
               <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
             </li>
             {% if request.user.is_staff %}
-            <li class="nav-item">
+            <li class="nav-item active">
               <a class="nav-link" href="{% url 'products' %}">Produtos</a>
+            </li>
+            {% else %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'perfil' %}">Meu perfil</a>
             </li>
             {% endif %}
           </ul>
         </div>
         {% if request.user.is_authenticated %}
         <span class="welcome-logout">Bem vindo, {{ request.user.username }}</span>
+        {% if request.user.is_staff %}
+        <a href="{% url 'pendentes' %}" class="btn btn-dark" style="margin-right: 10px;">Solicitações de Pedidos <span class="badge badge-light">{% orders_pending %}</span></a>
+        {% endif %}
         <span><a class="welcome-logout" href="{% url 'logout' %}"> Logout</a></span>
         </div>
         {% endif %}
     </nav>
 
     <div class="container-fluid">
+      <div class="mt-2 pt-4">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            {% endfor %}
+        {% endif %}
+      </div>
     {% block content %}
 
     {% endblock %}

@@ -15,9 +15,9 @@
 <div class="row">
 	<div class="col-md-3">
 		<div class="card card-body">
-			<a class="btn btn-warning" href="{% url 'home' %}"> &#8592; Back to Profile</a>
+			<a class="btn btn-warning" href="{% url 'home' %}"> &#8592; Voltar ao menu</a>
 			<hr>
-			<h3 style="text-align: center">Account Settings</h3>
+			<h3 style="text-align: center">{{ request.user.customer_set.nome }}</h3>
 			<hr>
 			<img class="profile-pic" src="{{ request.user.customer_set.photo.url }}" >
 		

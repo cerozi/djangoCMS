@@ -15,12 +15,20 @@
 							<th>Produto</th>
 							<th>Categoria</th>
 							<th>Preço</th>
+							<th>Atualizar</th>
+                    		<th>Deletar</th>
 						</tr>
 						{% for produto in produtos %}
 						<tr>
 							<td>{{ produto.nome }}</td>
 							<td>{{ produto.get_categoria_display }}</td>
 							<td>{{ produto.preco }}</td>
+							<td><a class="btn btn-sm btn-info" href='{% url "editar-produto" produto.pk %}'>Atualizar</a></td>
+                            <td>
+							<form method='POST' action='{% url "excluir-produto" produto.pk %}'> {% csrf_token %}
+								<button type="submit" class="btn btn-sm btn-danger">Deletar</a>
+							</form>
+						</td>
 						</tr>
 						{% empty %}
 						<tr>

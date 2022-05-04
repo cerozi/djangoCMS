@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from login.decorators import decorator
 
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 
 
 # Create your views here.
@@ -25,6 +26,7 @@ def pedidoCreate(request):
         form = pedidoFormAdmin(request.POST)
         if form.is_valid():
             form.save()
+            messages.info(request, "Pedido criado. ")
             return redirect(reverse('home'))
 
     context = {
@@ -47,6 +49,7 @@ def pedidoUpdate(request, pk):
         form = pedidoFormAdmin(request.POST, instance=order)
         if form.is_valid():
             form.save()
+            messages.info(request, "Pedido atualizado. ")
             return redirect(reverse('home'))
 
     context = {
@@ -66,6 +69,7 @@ def pedidoDelete(request, pk):
 
     if request.method == 'POST':
         order.delete()
+        messages.info(request, "Pedido excluído. ")
         return redirect(reverse('home'))
 
     context = {
@@ -91,6 +95,7 @@ def pedidosPendentesApprove(request, pk):
         pedido = pedidoModel.objects.get(pk=pk)
         pedido.approved_by_admin = True
         pedido.save()
+        messages.info(request, "Solicitação de pedido aprovada. ")
 
     return redirect(reverse('pendentes'))
 
@@ -99,6 +104,7 @@ def pedidosPendentesDelete(request, pk):
     if request.method == 'POST':
         pedido = pedidoModel.objects.get(pk=pk)
         pedido.delete()
+        messages.info(request, "Solicitação de pedido reprovada. ")
 
     return redirect(reverse('pendentes'))
 
@@ -116,6 +122,7 @@ def pedidoCreateUser(request):
             pedido_instance = pedidoModel(produto=produto, var_cliente=user, approved_by_admin=False, status='Pendente')
             pedido_instance.save()
 
+            messages.info(request, "Solicitação de pedido realizada. Aguardar aprovação do admin. ")
             return redirect(reverse('home'))
     
     return render(request, 'pedidos/criar-editar-pedido.html', {'form': form, 'titulo': 'Solicitar Pedido', 'botao': 'Solicitar'})

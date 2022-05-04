@@ -1,4 +1,4 @@
-from itertools import product
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import clienteModel
 from pedidos.models import pedidoModel
@@ -19,6 +19,7 @@ def clienteCreate(request):
         form = clienteForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.info(request, "Cliente criado com sucesso. ")
             return redirect(reverse('home'))
 
     context = {
@@ -74,6 +75,7 @@ def userProfile(request):
         form = userProfileForm(request.POST, request.FILES, instance=customer_user)
         if form.is_valid():
             form.save()
+            messages.info(request, "Perfil atualizado. ")
             redirect('user')
 
     context = {

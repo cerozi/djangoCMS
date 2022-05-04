@@ -1,18 +1,20 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from cliente.models import clienteModel
 from pedidos.models import pedidoModel, produtoModel
 
 from django.contrib.auth.decorators import login_required
 from login.decorators import decorator
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from django.utils.decorators import method_decorator
 
 from .forms import produtoForm
 from django.urls import reverse
+from django.contrib import messages
 
 # Create your views here.
 
+# == HOME ==
 
 @login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
@@ -71,7 +73,7 @@ def userHomeView(request):
 
     return render(request, 'home/user-home.html', context=context)
 
-
+# === PRODUTOS ===
 
 class productsList(ListView):
     template_name = 'home/produtos.html'
@@ -97,8 +99,44 @@ class productCreate(CreateView):
         form = produtoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.info(request, "Produto criado com sucesso. ")
             return redirect(reverse('products'))
         
         else:
             return render(request, self.template_name, {'form': form, 'titulo': 'Criar produto', 'botao': 'Registrar'})
 
+class productUpdate(UpdateView):
+    template_name = 'pedidos/criar-editar-pedido.html'
+
+    @method_decorator(decorator(allowed_holes=['admin']))
+    def get(self, request, pk, *args, **kwargs):
+        produto = produtoModel.objects.get(pk=pk)
+        form = produtoForm(instance=produto)
+
+        return render(request, self.template_name, {'form': form, 'botao': 'Editar', 'titulo': 'Editar pedido'})
+
+    @method_decorator(decorator(allowed_holes=['admin']))
+    def post(self, request, pk, *args, **kwargs):
+        produto = produtoModel.objects.get(pk=pk)
+        form = produtoForm(request.POST, instance=produto)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'Produto atualizado. ')
+            return redirect(reverse('products'))
+        else:
+            messages.info(request, 'Formulário inválido. ')
+            return redirect(reverse('editar-produto', args=(produto.pk, )))
+
+class productDelete(DeleteView):
+
+    @method_decorator(decorator(allowed_holes=['admin']))
+    def get(self, request, *args, **kwargs):
+        return redirect(reverse('products'))
+
+    @method_decorator(decorator(allowed_holes=['admin']))
+    def post(self, request, pk, *args, **kwargs):
+        produto = get_object_or_404(produtoModel, pk=pk)
+        produto.delete()
+
+        messages.info(request, 'Produto excluído. ')
+        return redirect(reverse('products'))
