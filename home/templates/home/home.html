@@ -50,13 +50,15 @@
                     <th>Deletar</th>
                 </tr>
                 {% for order in orders_list %}
-                <tr>
-                    <td>{{order.produto}}</td>
-                    <td>{{order.data}}</td>
-                    <td>{{order.status}}</td>
-                    <td><a class="btn btn-sm btn-info" href='{% url "editar-pedido" order.pk %}'>Atualizar</a></td>
-                    <td><a class="btn btn-sm btn-danger" href='{% url "deletar-pedido" order.pk %}'>Deletar</a></td>
-                </tr>
+                    
+                        <tr>
+                            <td>{{order.produto}}</td>
+                            <td>{{order.data}}</td>
+                            <td>{{order.status}}</td>
+                            <td><a class="btn btn-sm btn-info" href='{% url "editar-pedido" order.pk %}'>Atualizar</a></td>
+                            <td><a class="btn btn-sm btn-danger" href='{% url "deletar-pedido" order.pk %}'>Deletar</a></td>
+                        </tr>
+                    
                 {% empty %}
                 <tr>
                     <td colspan="5">

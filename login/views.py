@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import Group
 
 from .decorators import decorator_func
 
@@ -14,7 +15,18 @@ def createUserPage(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+
             user_name = form.data['username']
+            user_password = form.data['password1']
+
+            user = authenticate(request, username=user_name, password=user_password)
+            if user:
+                customer = Group.objects.get(name='customer')
+                user.groups.add(customer)
+                print('user added to the customer group. ')
+            else:
+                print('wrong credentials. ')
+
             messages.success(request, 'O user {} foi criado. '.format(user_name))
             return redirect('login')
 

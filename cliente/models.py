@@ -25,7 +25,7 @@ class clienteModel(models.Model):
 
         from pedidos.models import pedidoModel
         
-        num = pedidoModel.objects.filter(var_cliente=self).count()
+        num = pedidoModel.objects.filter(var_cliente=self, approved_by_admin=True).count()
         return num
 
     def __str__(self):

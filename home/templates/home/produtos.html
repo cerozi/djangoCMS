@@ -7,16 +7,26 @@
 		<div class="row">
 			<div class="col-md">
 				<div class="card card-body">
-					<h5>Produtos</h5>
-				</div>
-				<div class="card card-body">
+					<center><h5>Produtos</h5></center>
+					<a class="btn btn-primary btn-sm btn-block" style="width: 150px" href="{% url 'criar-produto' %}"><strong>CRIAR PRODUTO</strong></a>
+					<br>
 					<table class="table">
 						<tr>
 							<th>Produto</th>
 							<th>Categoria</th>
 							<th>Preço</th>
 						</tr>
-						
+						{% for produto in produtos %}
+						<tr>
+							<td>{{ produto.nome }}</td>
+							<td>{{ produto.get_categoria_display }}</td>
+							<td>{{ produto.preco }}</td>
+						</tr>
+						{% empty %}
+						<tr>
+							<td colspan="3"><center>Nenhum produto registrado.</center></td>
+						</tr
+						{% endfor %}
 					</table>
 				</div>
 			</div>
