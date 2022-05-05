@@ -5,6 +5,8 @@ from pedidos.models import pedidoModel
 from .forms import clienteForm, orderFilter
 from django.urls import reverse
 
+from django.contrib import messages
+
 from django.contrib.auth.decorators import login_required
 from login.decorators import decorator
 
@@ -13,6 +15,7 @@ from .forms import userProfileForm
 # Create your views here.
 
 @login_required(login_url='login')
+@decorator(allowed_holes=['admin'])
 def clienteCreate(request):
     form = clienteForm()
     if request.method == 'POST':
@@ -32,6 +35,7 @@ def clienteCreate(request):
 
 
 @login_required(login_url='login')
+@decorator(allowed_holes=['admin'])
 def clienteDetail(request, slug):
 
     form = orderFilter()
@@ -83,3 +87,34 @@ def userProfile(request):
     }
 
     return render(request, 'cliente/user/profile.html', context=context)
+
+@login_required(login_url='login')
+@decorator(allowed_holes=['admin'])
+def updateClienteProfile(request, slug):
+    template_name = 'cliente/user/profile.html'
+    cliente = clienteModel.objects.get(slug=slug)
+
+    if request.method == 'POST':
+        form = clienteForm(request.POST, instance=cliente)
+        if form.is_valid() and request.user.is_staff:
+            form.save()
+            messages.info(request, 'Perfil atualizado ({}).'.format(cliente.nome))
+            return redirect(reverse('perfil-cliente', args=(cliente.slug, )))
+
+    form = clienteForm(instance=cliente)
+
+    return render(request, template_name, {'form': form})
+
+@login_required(login_url='login')
+@decorator(allowed_holes=['admin'])
+def deleteClienteModel(request, slug):
+    template_name = 'pedidos/deletar-pedido.html'
+    cliente = clienteModel.objects.get(slug=slug)
+
+    if request.method == 'POST':
+        cliente.delete()
+        messages.info(request, 'Perfil deletado ({}).'.format(cliente.nome))
+        return redirect(reverse('home'))
+
+
+    return render(request, template_name, {'object': cliente})

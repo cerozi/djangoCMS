@@ -73,7 +73,7 @@ def pedidoDelete(request, pk):
         return redirect(reverse('home'))
 
     context = {
-        'order': order
+        'object': order
     }
 
     return render(request, 'pedidos/deletar-pedido.html', context=context)

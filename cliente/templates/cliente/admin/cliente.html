@@ -9,8 +9,8 @@
 		<div class="card card-body">
 			<h5>Cliente: {{ customer.nome }}</h5>
 			<hr>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="">Atualizar</a>
-			<a class="btn btn-outline-danger  btn-sm btn-block" href="">Deletar</a>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'editar-cliente' customer.slug %}">Atualizar</a>
+			<a class="btn btn-outline-danger  btn-sm btn-block" href="{% url 'deletar-cliente' customer.slug %}">Deletar</a>
 
 		</div>
 	</div>
