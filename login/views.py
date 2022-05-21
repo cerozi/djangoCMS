@@ -24,11 +24,8 @@ def createUserPage(request):
             user = authenticate(request, username=user_name, password=user_password) # verifies if the user was created;
                                                                                      
             if user:
-                customer = Group.objects.get(name='customer')                        # if so, add him to the customer group;
-                user.groups.add(customer)
-
-            messages.success(request, 'O user {} foi criado. '.format(user_name))
-            return redirect('login')
+                messages.success(request, 'O user {} foi criado. '.format(user_name))
+                return redirect('login')
 
     context = {
         'form': form
