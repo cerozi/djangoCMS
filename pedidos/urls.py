@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import pedidoCreate, pedidoUpdate, pedidoDelete, pedidoCreateUser, pedidosPendentes, pedidosPendentesApprove, pedidosPendentesDelete
+from .views import (pedidoCreate, pedidoUpdate, pedidoDelete, 
+                    pedidoCreateUser, pedidosPendentes, pedidosPendentesApprove, 
+                    pedidosPendentesDelete)
 
 
 urlpatterns = [

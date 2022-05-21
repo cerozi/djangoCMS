@@ -1,20 +1,21 @@
-from django.shortcuts import get_object_or_404, render, redirect
-from cliente.models import clienteModel
-from pedidos.models import pedidoModel, produtoModel
-
-from django.contrib.auth.decorators import login_required
-from login.decorators import decorator
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-
-from django.utils.decorators import method_decorator
-
-from .forms import produtoForm
-from django.urls import reverse
+# django imports
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-# Create your views here.
+# other apps imports
+from login.decorators import decorator
+from pedidos.models import pedidoModel, produtoModel
+from cliente.models import clienteModel
 
-# == HOME ==
+# current app imports
+from .forms import produtoForm
+
+# ADMIN HOME: here, the admin have access to a dashboard that displays all the users, orders details, 
+# such as the amount of orders pending and delivered
 
 @login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
@@ -23,17 +24,17 @@ def homeView(request):
     customer_list = clienteModel.objects.all()
     orders_list = pedidoModel.objects.filter(approved_by_admin=True).order_by('-data')[:5]
 
-    # PEDIDOS ENTREGUES, PENDENTES E TOTAL
+    # TOTAL ORDERS, ORDERS PENDING AND DELIVERED ORDERS
 
     delivery = pedidoModel.objects.filter(status='Entregue', approved_by_admin=True).count()
     pending = pedidoModel.objects.filter(status='Pendente', approved_by_admin=True).count()
     total_order = pedidoModel.objects.filter(approved_by_admin=True).count()
 
-    # TOTAL DE CLIENTES
+    # TOTAL OF CLIENTS
 
     total_clients = customer_list.count()
 
-    # CONTEXTO
+    # CONTEXT
 
     context = {
         'customers_list': customer_list,
@@ -47,14 +48,22 @@ def homeView(request):
     return render(request, 'home/home.html', context=context)
 
 
+# USER HOME: the customer user home allows the logged user to see all their orders, such as
+# amount of each order type 
+
 @login_required(login_url='login')
 @decorator(allowed_holes=['customer'])
 def userHomeView(request):
 
-    customer_orders = request.user.customer_set.order.filter(approved_by_admin=True).order_by('-data')
+    customer_orders = request.user.customer_set.order.filter(approved_by_admin=True).order_by('-data') # queryset that
+                                                                                                    # returns a list of all the
+                                                                                                    # approved user orders 
+
+    # queryset that returns that amount of each order type;
+    # those amount is used to be displayed in the user dashboard
 
     total_orders = pedidoModel.objects.filter(var_cliente=request.user.customer_set, 
-                                            approved_by_admin=True).count()
+                                            approved_by_admin=True).count() 
 
     delivery = pedidoModel.objects.filter(var_cliente=request.user.customer_set,
                                          status='Entregue', 
@@ -64,6 +73,8 @@ def userHomeView(request):
                                         status='Pendente', 
                                         approved_by_admin=True).count()
 
+    # context
+    
     context = {
         'customer_orders': customer_orders,
         'total_orders': total_orders,

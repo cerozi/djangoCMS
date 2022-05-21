@@ -1,23 +1,25 @@
-from django.views.generic import ListView
+# django imports
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from .forms import pedidoFormAdmin, pedidoFormUser
 from django.urls import reverse
-from .models import pedidoModel
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView
+
+# other apps imports
+from login.decorators import decorator
 from cliente.models import clienteModel
 
-from django.contrib.auth.decorators import login_required
-from login.decorators import decorator
-
-from django.utils.decorators import method_decorator
-from django.contrib import messages
+# current apps imports
+from .forms import pedidoFormAdmin, pedidoFormUser
+from .models import pedidoModel
 
 
-# Create your views here.
+# === ADMIN ORDER VIEWS === 
+# views that allow the admin to CRUD the orders;
 
-# ========= ADMIN ========
 
-# CRIAR PEDIDO
-
+# create order view
 @login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
 def pedidoCreate(request):
@@ -25,7 +27,7 @@ def pedidoCreate(request):
     if request.method == 'POST':
         form = pedidoFormAdmin(request.POST)
         if form.is_valid():
-            form.save()
+            form.save() # creates a new order instance
             messages.info(request, "Pedido criado. ")
             return redirect(reverse('home'))
 
@@ -37,8 +39,7 @@ def pedidoCreate(request):
 
     return render(request, 'pedidos/criar-editar-pedido.html', context=context)
 
-# EDITAR PEDIDO
-
+# update order
 @login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
 def pedidoUpdate(request, pk):
@@ -48,7 +49,7 @@ def pedidoUpdate(request, pk):
     if request.method == 'POST':
         form = pedidoFormAdmin(request.POST, instance=order)
         if form.is_valid():
-            form.save()
+            form.save() # updates a order instance
             messages.info(request, "Pedido atualizado. ")
             return redirect(reverse('home'))
 
@@ -60,15 +61,14 @@ def pedidoUpdate(request, pk):
 
     return render(request, 'pedidos/criar-editar-pedido.html', context=context)
 
-# DELETAR PEDIDO
-
+# deletes order
 @login_required(login_url='login')  
 @decorator(allowed_holes=['admin'])
 def pedidoDelete(request, pk):
     order = pedidoModel.objects.get(pk=pk)
 
     if request.method == 'POST':
-        order.delete()
+        order.delete() # deletes a order instance
         messages.info(request, "Pedido excluído. ")
         return redirect(reverse('home'))
 
@@ -78,8 +78,11 @@ def pedidoDelete(request, pk):
 
     return render(request, 'pedidos/deletar-pedido.html', context=context)
 
-# PEDIDOS PENDENTES 
+# ___ pending orders ____
+# pending orders are orders that were requested by the client and are waiting for the admin approval;
 
+
+# lists all the pending orders
 class pedidosPendentes(ListView):
     template_name = 'pedidos/pedidos-pendentes.html'
 
@@ -89,6 +92,7 @@ class pedidosPendentes(ListView):
 
         return render(request, 'pedidos/pedidos-pendentes.html', {'orders_pending': orders_pending})
 
+# approve the pending order
 @decorator(allowed_holes=['admin'])
 def pedidosPendentesApprove(request, pk):
     if request.method == 'POST':
@@ -99,6 +103,7 @@ def pedidosPendentesApprove(request, pk):
 
     return redirect(reverse('pendentes'))
 
+# deny the pending order
 @decorator(allowed_holes=['admin'])
 def pedidosPendentesDelete(request, pk):
     if request.method == 'POST':
@@ -108,7 +113,8 @@ def pedidosPendentesDelete(request, pk):
 
     return redirect(reverse('pendentes'))
 
-# ========= USER ========
+# === USER VIEWS ===
+# allow user to request a new order; admin can approve or deny the request order;
 
 def pedidoCreateUser(request):
     form = pedidoFormUser()
@@ -120,7 +126,7 @@ def pedidoCreateUser(request):
             user = clienteModel.objects.get(user=request.user)
 
             pedido_instance = pedidoModel(produto=produto, var_cliente=user, approved_by_admin=False, status='Pendente')
-            pedido_instance.save()
+            pedido_instance.save() # creates order instance
 
             messages.info(request, "Solicitação de pedido realizada. Aguardar aprovação do admin. ")
             return redirect(reverse('home'))

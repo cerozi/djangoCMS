@@ -1,18 +1,21 @@
+# django imports
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import clienteModel
-from pedidos.models import pedidoModel
-from .forms import clienteForm, orderFilter
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from django.contrib import messages
-
-from django.contrib.auth.decorators import login_required
+# other apps imports
 from login.decorators import decorator
+from pedidos.models import pedidoModel
 
-from .forms import userProfileForm
+# current app imports
+from .forms import clienteForm, orderFilter, userProfileForm
+from .models import clienteModel
 
-# Create your views here.
+
+# ==== ADMIN VIEWS ===
+# Basically, these views set the permission the admin to create, update, delete, and get the detail
+# from a client model
 
 @login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
@@ -69,26 +72,6 @@ def clienteDetail(request, slug):
     return render(request, 'cliente/admin/cliente.html', context=context)
 
 @login_required(login_url='login')
-@decorator(allowed_holes=['customer'])
-def userProfile(request):
-    
-    customer_user = clienteModel.objects.get(user=request.user)
-    form = userProfileForm(instance=customer_user)
-
-    if request.method == 'POST':
-        form = userProfileForm(request.POST, request.FILES, instance=customer_user)
-        if form.is_valid():
-            form.save()
-            messages.info(request, "Perfil atualizado. ")
-            redirect('user')
-
-    context = {
-        'form': form
-    }
-
-    return render(request, 'cliente/user/profile.html', context=context)
-
-@login_required(login_url='login')
 @decorator(allowed_holes=['admin'])
 def updateClienteProfile(request, slug):
     template_name = 'cliente/user/profile.html'
@@ -118,3 +101,29 @@ def deleteClienteModel(request, slug):
 
 
     return render(request, template_name, {'object': cliente})
+
+# == CUSTOMER/REGULAR USER VIEWS ==
+# regular users can only have access to their profile
+# this view can get bot GET and HTTP methods: with get method user see the detail from their client profile
+# with POST method, they can update their profile
+
+@login_required(login_url='login')
+@decorator(allowed_holes=['customer'])
+def userProfile(request):
+    
+    customer_user = clienteModel.objects.get(user=request.user)
+    form = userProfileForm(instance=customer_user)
+
+    if request.method == 'POST':
+        form = userProfileForm(request.POST, request.FILES, instance=customer_user)
+        if form.is_valid():
+            form.save()
+            messages.info(request, "Perfil atualizado. ")
+            redirect('user')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'cliente/user/profile.html', context=context)
+

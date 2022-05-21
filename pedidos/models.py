@@ -2,8 +2,6 @@ from django.urls import reverse
 from django.db import models
 from cliente.models import clienteModel
 
-# Create your models here.
-
 class produtoModel(models.Model):
 
     CATEGORIA_CHOICES = (

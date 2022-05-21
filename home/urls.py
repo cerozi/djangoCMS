@@ -2,7 +2,9 @@ from django.urls import path
 from .views import homeView, productDelete, productsList, userHomeView, productCreate, productUpdate
 
 urlpatterns = [ 
+    # ADMIN home;
     path('', homeView, name='home'),
+    # CUSTOMER home;
     path('user/', userHomeView, name='user'),
 
     path('produtos/', productsList.as_view(), name='products'),
