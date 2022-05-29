@@ -1,11 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 from django.db.models.signals import post_save
-
 from django.contrib.auth.models import Group
 
-# Create your models here.
 
 class clienteModel(models.Model):
     photo = models.ImageField(default='default.png')
@@ -32,17 +30,21 @@ class clienteModel(models.Model):
         return self.nome
 
 
-# DJANGO SIGNALS PARA CRIAÇÃO AUTOMÁTICA DE PERFIL
-
-def criaProfile(sender, instance, created, **kwargs):
+# django signals; receiver that creates a client model and adds user to the 'customer' group
+def create_customer_profile(sender, instance, created, **kwargs):
     if created:
 
-        group = Group.objects.get(name='customer')
-        instance.groups.add(group)
+        if not instance.is_staff:
+            group = Group.objects.filter(name='customer')
+            if group.exists():
+                instance.groups.add(group[0])
 
-        clienteModel.objects.create(user=instance, nome=instance.username)
-        print('Signal chamado com sucesso. ')
-
+            clienteModel.objects.create(user=instance, nome=instance.username)
+        else:
+            group = Group.objects.filter(name='admin')
+            if group.exists():
+                instance.groups.add(group[0])
     
 
-post_save.connect(criaProfile, sender=User)
+
+post_save.connect(create_customer_profile, sender=User)

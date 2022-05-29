@@ -23,7 +23,7 @@ def createUserPage(request):
 
             user = authenticate(request, username=user_name, password=user_password) # verifies if the user was created;
                                                                                      
-            if user:
+            if user: # if so, redirects him to the login page;
                 messages.success(request, 'O user {} foi criado. '.format(user_name))
                 return redirect('login')
 
